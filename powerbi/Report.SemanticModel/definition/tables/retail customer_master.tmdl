@@ -1,0 +1,476 @@
+table 'retail customer_master'
+	lineageTag: 5f3edc17-87cc-4519-8d8d-db58d59b2675
+
+	measure 'Total Customers' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT('retail_transactions_fact'[Customer ID]),
+			    'retail_transactions_fact'[Quantity] > 0,
+			    'retail_transactions_fact'[Price] > 0
+			)
+		formatString: 0
+		lineageTag: 338088bd-01f4-4464-90bb-7a1ecdb7ae91
+
+	measure 'Total Monetary' =
+			
+			CALCULATE(
+			    SUM('retail_transactions_fact'[LineValue]),
+			    'retail_transactions_fact'[Customer ID] <> BLANK()
+			)
+		lineageTag: 039a0ee7-1057-48d3-8f48-ad116e845be3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Avg Frequency' =
+			
+			AVERAGEX(
+			    FILTER(
+			        VALUES('retail_transactions_fact'[Customer ID]),
+			        NOT ISBLANK('retail_transactions_fact'[Customer ID])
+			    ),
+			    CALCULATE(
+			        DISTINCTCOUNT('retail_transactions_fact'[Invoice]),
+			        'retail_transactions_fact'[Quantity] > 0,
+			        'retail_transactions_fact'[Price] > 0
+			    )
+			)
+		lineageTag: 24dc3233-5482-4c83-b25c-99894eb6f6b0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Avg Order Value' =
+			
+			DIVIDE(
+			    CALCULATE(
+			        SUM('retail_transactions_fact'[LineValue]),
+			        'retail_transactions_fact'[Customer ID] <> BLANK()
+			    ),
+			    CALCULATE(
+			        DISTINCTCOUNT('retail_transactions_fact'[Invoice]),
+			        'retail_transactions_fact'[Customer ID] <> BLANK(),
+			        'retail_transactions_fact'[Quantity] > 0,
+			        'retail_transactions_fact'[Price] > 0
+			    )
+			)
+		lineageTag: ee85482a-7e84-4831-91f7-81860df8dd51
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Historical Monetary by Segment' =
+			
+			CALCULATE(
+			    SUM('retail_transactions_fact'[LineValue]),
+			    'retail_transactions_fact'[Customer ID] <> BLANK()
+			)
+		lineageTag: 9ded179b-5495-464c-9fc6-406fb23b8e96
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Top 3 & Others Monetary' =
+			
+			VAR TopSegments =
+			    TOPN(
+			        3,
+			        ADDCOLUMNS(
+			            ALL('retail customer_master'[segment]),
+			            "@Monetary",
+			            CALCULATE([Historical Monetary by Segment])
+			        ),
+			        [@Monetary], DESC,
+			        'retail customer_master'[segment], ASC
+			    )
+			
+			VAR CurrentCategory =
+			    SELECTEDVALUE('Legend Categories'[Category])
+			
+			VAR OtherSegments =
+			    EXCEPT(
+			        ALL('retail customer_master'[segment]),
+			        SELECTCOLUMNS(
+			            TopSegments,
+			            "segment", 'retail customer_master'[segment]
+			        )
+			    )
+			
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        CurrentCategory = "Others",
+			            CALCULATE(
+			                [Historical Monetary by Segment],
+			                OtherSegments
+			            ),
+			
+			        CONTAINS(
+			            TopSegments,
+			            'retail customer_master'[segment],
+			            CurrentCategory
+			        ),
+			            CALCULATE(
+			                [Historical Monetary by Segment],
+			                TREATAS(
+			                    {CurrentCategory},
+			                    'retail customer_master'[segment]
+			                )
+			            ),
+			
+			        BLANK()
+			    )
+		lineageTag: 0a68973f-e5ab-46d8-bf85-4fb0f8df158a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'RFM Customers' =
+			
+			DISTINCTCOUNT('retail customer_master'[customer_id])
+		formatString: 0
+		lineageTag: e1f1dbee-c45b-4fab-bc4c-27f4db78f976
+
+	measure 'Customer % of Total' =
+			
+			DIVIDE(
+			    DISTINCTCOUNT('retail customer_master'[customer_id]),
+			    CALCULATE(
+			        DISTINCTCOUNT('retail customer_master'[customer_id]),
+			        REMOVEFILTERS('retail customer_master'[segment])
+			    )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 86a9f5f3-d06c-4e51-8668-1fb636b93511
+
+	measure 'Avg R' =
+			
+			AVERAGE('retail customer_master'[recency])
+		lineageTag: e25522d3-d20f-4585-b056-6cd443159a21
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Avg F' =
+			
+			AVERAGE('retail customer_master'[frequency])
+		lineageTag: bc7a94e8-ba86-4430-87f0-7327a4aecedd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Avg M' =
+			
+			AVERAGE('retail customer_master'[monetary])
+		lineageTag: 575af4ed-6227-418f-b619-caa62301ae21
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Purchase Behavior Business Insight' =
+			
+			VAR TotalCustomers =
+			    DISTINCTCOUNT('retail customer_master'[customer_id])
+			
+			VAR SelectedSegment =
+			    SWITCH(
+			        TRUE(),
+			        NOT ISFILTERED('retail customer_master'[segment]),
+			            "All RFM Segments",
+			        HASONEVALUE('retail customer_master'[segment]),
+			            SELECTEDVALUE('retail customer_master'[segment]),
+			        "Selected RFM Segments"
+			    )
+			
+			VAR BehaviorSummary =
+			    ADDCOLUMNS(
+			        VALUES('retail customer_master'[Purchase Behavior Category]),
+			        "@Customers",
+			        CALCULATE(
+			            DISTINCTCOUNT('retail customer_master'[customer_id])
+			        )
+			    )
+			
+			VAR TopBehavior =
+			    TOPN(
+			        1,
+			        BehaviorSummary,
+			        [@Customers], DESC
+			    )
+			
+			VAR DominantBehavior =
+			    MAXX(
+			        TopBehavior,
+			        'retail customer_master'[Purchase Behavior Category]
+			    )
+			
+			VAR DominantCount =
+			    MAXX(TopBehavior, [@Customers])
+			
+			VAR DominantShare =
+			    DIVIDE(DominantCount, TotalCustomers)
+			
+			VAR SegmentSummary =
+			    ADDCOLUMNS(
+			        VALUES('retail customer_master'[segment]),
+			        "@AvgMonetary",
+			        CALCULATE([Avg Monetary])
+			    )
+			
+			VAR TopMonetarySegment =
+			    TOPN(
+			        1,
+			        FILTER(
+			            SegmentSummary,
+			            NOT ISBLANK([@AvgMonetary])
+			        ),
+			        [@AvgMonetary], DESC
+			    )
+			
+			VAR BestSegment =
+			    MAXX(
+			        TopMonetarySegment,
+			        'retail customer_master'[segment]
+			    )
+			
+			VAR BestMonetary =
+			    MAXX(
+			        TopMonetarySegment,
+			        [@AvgMonetary]
+			    )
+			
+			RETURN
+			    IF(
+			        TotalCustomers = 0,
+			        "No customer data available.",
+			        "Within " & SelectedSegment
+			        & ", " & DominantBehavior
+			        & " represents "
+			        & FORMAT(DominantShare, "0.0%")
+			        & " of customers ("
+			        & FORMAT(DominantCount, "#,##0")
+			        & " customers). "
+			        & BestSegment
+			        & " has the highest average monetary value ("
+			        & FORMAT(BestMonetary, "#,##0.00")
+			        & ") among the selected segments."
+			    )
+		lineageTag: 5da56287-ba9d-4b6b-a856-00b017094f3e
+
+	measure 'RFM Key Takeaway' =
+			
+			VAR SelectedSegment =
+			    SELECTEDVALUE(
+			        'retail customer_master'[segment]
+			    )
+			RETURN
+			    SWITCH(
+			        SelectedSegment,
+			
+			        "Champions",
+			        "High-value customers with strong loyalty. Focus on retention and exclusive rewards.",
+			
+			        "Loyal Customers",
+			        "Consistent buyers with strong engagement. Encourage repeat purchases and upselling.",
+			
+			        "Potential Loyalists",
+			        "Customers showing promising engagement. Nurture them toward long-term loyalty.",
+			
+			        "At Risk",
+			        "Previously valuable customers with declining activity. Prioritize re-engagement campaigns.",
+			
+			        "Select an RFM segment to explore its key takeaway."
+			    )
+		lineageTag: 12a031ed-d4dc-41fc-9826-1b858809a104
+
+	column customer_id
+		dataType: int64
+		formatString: 0
+		lineageTag: a49f7613-7499-44f5-a744-3072c355d91c
+		summarizeBy: none
+		sourceColumn: customer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column recency
+		dataType: double
+		lineageTag: 56c1e5fb-8d05-4d2c-a61a-296aca048cc5
+		summarizeBy: none
+		sourceColumn: recency
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column frequency
+		dataType: int64
+		formatString: 0
+		lineageTag: 53d1d949-59f7-441d-948d-fab43a65461b
+		summarizeBy: none
+		sourceColumn: frequency
+
+		annotation SummarizationSetBy = Automatic
+
+	column monetary
+		dataType: double
+		lineageTag: 6ec442d4-7936-421f-9299-6213ed4b1f9c
+		summarizeBy: none
+		sourceColumn: monetary
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column average_interpurchase_days
+		dataType: double
+		lineageTag: e2713ccb-624a-4965-bb2c-a4eb36919c93
+		summarizeBy: none
+		sourceColumn: average_interpurchase_days
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column interpurchase_interval_count
+		dataType: int64
+		formatString: 0
+		lineageTag: e8684cae-291c-4489-92c7-9c80d92c16a9
+		summarizeBy: none
+		sourceColumn: interpurchase_interval_count
+
+		annotation SummarizationSetBy = Automatic
+
+	column segment
+		dataType: string
+		lineageTag: 4ad94b5b-5b76-4b91-bf67-4471bae1b999
+		summarizeBy: none
+		sourceColumn: segment
+
+		annotation SummarizationSetBy = Automatic
+
+	column timing_history_group
+		dataType: string
+		lineageTag: f09018f6-fe52-42e7-9eee-9595503050b5
+		summarizeBy: none
+		sourceColumn: timing_history_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column r_score
+		dataType: int64
+		formatString: 0
+		lineageTag: 14abb64a-3064-4eb7-adab-498444601a97
+		summarizeBy: none
+		sourceColumn: r_score
+
+		annotation SummarizationSetBy = Automatic
+
+	column f_score
+		dataType: int64
+		formatString: 0
+		lineageTag: 68bc7353-fd5c-46ac-8d05-ff38b067f1af
+		summarizeBy: none
+		sourceColumn: f_score
+
+		annotation SummarizationSetBy = Automatic
+
+	column m_score
+		dataType: int64
+		formatString: 0
+		lineageTag: 309c2bd8-f793-4c0e-8651-e192d8c349b2
+		summarizeBy: none
+		sourceColumn: m_score
+
+		annotation SummarizationSetBy = Automatic
+
+	column rfm_score
+		dataType: string
+		lineageTag: 01aaa430-6fcb-4ccf-a95f-53a3d8338569
+		summarizeBy: none
+		sourceColumn: rfm_score
+
+		annotation SummarizationSetBy = Automatic
+
+	column purchase_timing_cluster
+		dataType: int64
+		formatString: 0
+		lineageTag: a1500f2e-d8be-447f-ac27-9500b5fac6fe
+		summarizeBy: none
+		sourceColumn: purchase_timing_cluster
+
+		annotation SummarizationSetBy = Automatic
+
+	column rfm_cluster
+		dataType: int64
+		formatString: 0
+		lineageTag: d703d88f-a8a0-4fee-b1c1-7c86432d5ee4
+		summarizeBy: none
+		sourceColumn: rfm_cluster
+
+		annotation SummarizationSetBy = Automatic
+
+	column overdue_ratio
+		dataType: double
+		lineageTag: e3172584-2a59-4164-8661-b18b47cff193
+		summarizeBy: none
+		sourceColumn: overdue_ratio
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column overdue_status
+		dataType: string
+		lineageTag: 21c8bea6-3909-45d2-8e93-f349163d9099
+		summarizeBy: none
+		sourceColumn: overdue_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_value_cluster
+		dataType: int64
+		formatString: 0
+		lineageTag: b0dfeaeb-4853-41fd-8cfe-830c2df8d08f
+		summarizeBy: none
+		sourceColumn: customer_value_cluster
+
+		annotation SummarizationSetBy = Automatic
+
+	column purchase_behavior_cluster
+		dataType: int64
+		formatString: 0
+		lineageTag: d2d5cb48-cbec-4a02-b57b-66c66039842d
+		summarizeBy: none
+		sourceColumn: purchase_behavior_cluster
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Overdue Status Display' =
+			
+			IF(
+			    ISBLANK('retail customer_master'[overdue_status]),
+			    "Insufficient History",
+			    'retail customer_master'[overdue_status]
+			)
+		lineageTag: 469935a6-022d-4afa-ad54-09f72c378ebf
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Purchase Behavior Category' =
+			
+			SWITCH(
+			    'retail customer_master'[purchase_behavior_cluster],
+			    0, "Premium Niche Buyers",
+			    1, "High-Volume Buyers",
+			    2, "Regular Buyers",
+			    "Insufficient History"
+			)
+		lineageTag: 5c327018-42fb-4525-909f-d737d1437384
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'retail customer_master' = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("localhost", "retail_analytics"),
+				    retail_customer_master = Source{[Schema="retail",Item="customer_master"]}[Data]
+				in
+				    retail_customer_master
+
+	annotation PBI_ResultType = Table
+

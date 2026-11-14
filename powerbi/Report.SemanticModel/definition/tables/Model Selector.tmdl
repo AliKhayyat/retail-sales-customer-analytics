@@ -1,0 +1,77 @@
+table 'Model Selector'
+	lineageTag: 654a3d94-6da4-499f-b497-578da0fc63a8
+
+	measure 'Selected Silhouette' =
+			
+			SWITCH(
+			    SELECTEDVALUE('Model Selector'[Model], "RFM"),
+			    "RFM", 0.4164,
+			    "Customer Value", 0.3340,
+			    "Purchase Timing", 0.4214,
+			    "Purchase Behavior", 0.3251
+			)
+		lineageTag: 82f3a8a2-2009-4621-a788-9082894d5b33
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Selected Calinski-Harabasz' =
+			
+			SWITCH(
+			    SELECTEDVALUE('Model Selector'[Model], "RFM"),
+			    "RFM", 4295.3354,
+			    "Customer Value", 2973.0126,
+			    "Purchase Timing", 3840.0487,
+			    "Purchase Behavior", 1926.1316
+			)
+		lineageTag: 36424e61-8d8e-4d26-bd1b-056a9948bf2e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Selected Davies-Bouldin' =
+			
+			SWITCH(
+			    SELECTEDVALUE('Model Selector'[Model], "RFM"),
+			    "RFM", 0.8354,
+			    "Customer Value", 0.9854,
+			    "Purchase Timing", 0.7846,
+			    "Purchase Behavior", 0.8796
+			)
+		lineageTag: c70bb0ed-971f-4fc1-91dd-773fa9db1df0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Model
+		lineageTag: e7c5d140-ca10-4a01-9835-63ae5768eaab
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Model]
+		sortByColumn: 'Sort Order'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sort Order'
+		formatString: 0
+		lineageTag: d9ac2d7a-2296-4ac5-83f4-4e7ea6863aea
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Sort Order]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Model Selector' = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "Model", STRING,
+				    "Sort Order", INTEGER,
+				    {
+				        {"RFM", 1},
+				        {"Customer Value", 2},
+				        {"Purchase Timing", 3},
+				        {"Purchase Behavior", 4}
+				    }
+				)
+
+	annotation PBI_Id = d08b277c448844cb84d84342e77217f5
+

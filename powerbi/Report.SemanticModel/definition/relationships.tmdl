@@ -1,0 +1,22 @@
+relationship 6dc8f611-183d-49f2-a703-f9ff8330a4be
+	joinOnDateBehavior: datePartOnly
+	fromColumn: retail_transactions_fact.InvoiceDate
+	toColumn: LocalDateTable_5c961374-323d-4ddb-980e-bcfa328a9809.Date
+
+relationship 0ee5b22b-5c15-4932-88f2-465218b36991
+	joinOnDateBehavior: datePartOnly
+	fromColumn: DimDate.Date
+	toColumn: LocalDateTable_3e905705-c46f-4a40-aced-3449fbebd0c4.Date
+
+relationship 151514ba-0ab4-5ed5-85f2-5822d744f472
+	fromColumn: retail_transactions_fact.'Invoice Date Only'
+	toColumn: DimDate.Date
+
+relationship e8381923-c541-b1d5-794f-4fa570ea82cc
+	fromColumn: retail_transactions_fact.'Customer ID'
+	toColumn: 'retail customer_master'.customer_id
+
+relationship 0fd7592e-b601-a00e-85a3-eed24fc989a1
+	fromColumn: cluster_scatter_data.Model
+	toColumn: 'Model Selector'.Model
+

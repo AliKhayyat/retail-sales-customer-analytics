@@ -1,0 +1,100 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 167.4907217465219,
+        "y": 1185.07586141407
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 547.81467546260444,
+            "y": 1971.1753069401539
+          },
+          "nodeIndex": "retail_transactions_fact",
+          "nodeLineageTag": "6c542225-ee73-418f-a9c6-012f61d9cf02",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 168.20177591847386,
+            "y": 1701.7217470581413
+          },
+          "nodeIndex": "retail customer_master",
+          "nodeLineageTag": "5f3edc17-87cc-4519-8d8d-db58d59b2675",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 835.74734416735419,
+            "y": 1696.411075457168
+          },
+          "nodeIndex": "DimDate",
+          "nodeLineageTag": "a0494566-6397-4a3d-acd6-238c39bedfae",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 468.0346167919397,
+            "y": 1405.9792545331893
+          },
+          "nodeIndex": "Legend Categories",
+          "nodeLineageTag": "3bb41c6d-f8ee-4088-b944-2530511d6589",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 733.94244998591455,
+            "y": 1217.4821277493174
+          },
+          "nodeIndex": "Model Selector",
+          "nodeLineageTag": "654a3d94-6da4-499f-b497-578da0fc63a8",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1101.6551773613292,
+            "y": 1074.9210090428851
+          },
+          "nodeIndex": "cluster_scatter_data",
+          "nodeLineageTag": "d399a029-f25f-4b54-aa81-aa5beab8f933",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 63.287087723234549,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

@@ -1,0 +1,41 @@
+# Python environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Temporary files, logs, and checkpoints
+*.log
+*.tmp
+*checkpoint*
+*.pkl
+*.pickle
+
+# Raw source dataset (download separately; do not commit)
+data/online_retail_II.xlsx
+
+# Large transaction-level export (recreated locally; exceeds GitHub's regular file limit)
+retail_final_outputs/retail_transactions_fact.csv
+
+# Secrets and local environment configuration
+.env
+.env.*
+!.env.example
+
+# Power BI local cache and machine-specific settings
+**/.pbi/
+**/localSettings.json
+**/cache.abf
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+desktop.ini

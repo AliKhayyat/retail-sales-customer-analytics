@@ -1,0 +1,470 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "adbdb3778ea90091e56d",
+  "position": {
+    "x": 132.36009732360097,
+    "y": 203.99026763990267,
+    "z": 5000,
+    "height": 515.425790754258,
+    "width": 734.98783454987836,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
+    "query": {
+      "queryState": {
+        "dataset": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "cluster_scatter_data"
+                    }
+                  },
+                  "Property": "Customer ID"
+                }
+              },
+              "queryRef": "CountNonNull(cluster_scatter_data.Customer ID)",
+              "nativeQueryRef": "Customer ID"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "cluster_scatter_data"
+                    }
+                  },
+                  "Property": "X Value"
+                }
+              },
+              "queryRef": "Sum(cluster_scatter_data.X Value)",
+              "nativeQueryRef": "X Value"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "cluster_scatter_data"
+                    }
+                  },
+                  "Property": "Y Value"
+                }
+              },
+              "queryRef": "Sum(cluster_scatter_data.Y Value)",
+              "nativeQueryRef": "Y Value"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "cluster_scatter_data"
+                    }
+                  },
+                  "Property": "Cluster"
+                }
+              },
+              "queryRef": "Sum(cluster_scatter_data.Cluster)",
+              "nativeQueryRef": "Cluster"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "cluster_scatter_data"
+                    }
+                  },
+                  "Property": "X Label"
+                }
+              },
+              "queryRef": "cluster_scatter_data.X Label",
+              "nativeQueryRef": "X Label"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "cluster_scatter_data"
+                    }
+                  },
+                  "Property": "Y Label"
+                }
+              },
+              "queryRef": "cluster_scatter_data.Y Label",
+              "nativeQueryRef": "Y Label"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "cluster_scatter_data"
+                  }
+                },
+                "Property": "Customer ID"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {
+      "vega": [
+        {
+          "properties": {
+            "provider": {
+              "expr": {
+                "Literal": {
+                  "Value": "'vegaLite'"
+                }
+              }
+            },
+            "jsonSpec": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\n  \"$schema\": \"https://vega.github.io/schema/vega-lite/v5.json\",\n  \"data\": {\n    \"name\": \"dataset\"\n  },\n  \"width\": \"container\",\n  \"height\": 380,\n  \"transform\": [\n    {\n      \"calculate\": \"length(data(''dataset'')) > 0 ? data(''dataset'')[0][''Model''] : ''Customer Segmentation''\",\n      \"as\": \"Selected Model\"\n    }\n  ],\n  \"title\": {\n    \"text\": {\n      \"expr\": \"length(data(''dataset'')) > 0 ? data(''dataset'')[0][''Model''] + '' Cluster Visualization'' : ''Customer Cluster Visualization''\"\n    },\n    \"subtitle\": {\n      \"expr\": \"length(data(''dataset'')) > 0 ? ''X = '' + data(''dataset'')[0][''X Label''] + ''     |     Y = '' + data(''dataset'')[0][''Y Label''] : ''''\"\n    },\n    \"anchor\": \"start\",\n    \"fontSize\": 16,\n    \"subtitleFontSize\": 12,\n    \"subtitleColor\": \"#666666\"\n  },\n  \"mark\": {\n    \"type\": \"circle\",\n    \"filled\": true,\n    \"opacity\": 0.65,\n    \"size\": 48\n  },\n  \"encoding\": {\n    \"x\": {\n      \"field\": \"X Value\",\n      \"type\": \"quantitative\",\n      \"title\": {\n        \"expr\": \"length(data(''dataset'')) > 0 ? data(''dataset'')[0][''X Label''] : ''X Value''\"\n      },\n      \"axis\": {\n        \"grid\": true,\n        \"labelFontSize\": 10,\n        \"titleFontSize\": 12\n      }\n    },\n    \"y\": {\n      \"field\": \"Y Value\",\n      \"type\": \"quantitative\",\n      \"title\": {\n        \"expr\": \"length(data(''dataset'')) > 0 ? data(''dataset'')[0][''Y Label''] : ''Y Value''\"\n      },\n      \"axis\": {\n        \"grid\": true,\n        \"labelFontSize\": 10,\n        \"titleFontSize\": 12\n      }\n    },\n    \"color\": {\n      \"field\": \"Cluster\",\n      \"type\": \"nominal\",\n      \"title\": \"Cluster\",\n      \"scale\": {\n        \"domain\": [0, 1, 2],\n        \"range\": [\n          \"#2878B5\",\n          \"#E58B32\",\n          \"#3A9D75\"\n        ]\n      },\n      \"legend\": {\n        \"orient\": \"bottom\",\n        \"title\": \"Cluster\",\n        \"labelFontSize\": 10\n      }\n    },\n    \"tooltip\": [\n      {\n        \"field\": \"Customer ID\",\n        \"type\": \"nominal\",\n        \"title\": \"Customer ID\"\n      },\n      {\n        \"field\": \"Model\",\n        \"type\": \"nominal\",\n        \"title\": \"Model\"\n      },\n      {\n        \"field\": \"Cluster\",\n        \"type\": \"nominal\",\n        \"title\": \"Cluster\"\n      },\n      {\n        \"field\": \"X Label\",\n        \"type\": \"nominal\",\n        \"title\": \"X Feature\"\n      },\n      {\n        \"field\": \"X Value\",\n        \"type\": \"quantitative\",\n        \"title\": \"X Value\",\n        \"format\": \",.2f\"\n      },\n      {\n        \"field\": \"Y Label\",\n        \"type\": \"nominal\",\n        \"title\": \"Y Feature\"\n      },\n      {\n        \"field\": \"Y Value\",\n        \"type\": \"quantitative\",\n        \"title\": \"Y Value\",\n        \"format\": \",.2f\"\n      }\n    ]\n  },\n  \"config\": {\n    \"background\": \"transparent\",\n    \"view\": {\n      \"stroke\": null\n    },\n    \"axis\": {\n      \"labelColor\": \"#666666\",\n      \"titleColor\": \"#333333\",\n      \"domainColor\": \"#CCCCCC\",\n      \"tickColor\": \"#CCCCCC\"\n    },\n    \"title\": {\n      \"color\": \"#222222\"\n    }\n  }\n}'"
+                }
+              }
+            },
+            "jsonConfig": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{}'"
+                }
+              }
+            },
+            "enableTooltips": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableContextMenu": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableContextMenuSelector": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableHighlight": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "enableSelection": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "selectionMaxDataPoints": {
+              "expr": {
+                "Literal": {
+                  "Value": "50D"
+                }
+              }
+            },
+            "selectionMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'simple'"
+                }
+              }
+            },
+            "version": {
+              "expr": {
+                "Literal": {
+                  "Value": "'6.4.3'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "stateManagement": [
+        {
+          "properties": {
+            "denebMetaVersion": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2'"
+                }
+              }
+            },
+            "viewportHeight": {
+              "expr": {
+                "Literal": {
+                  "Value": "497D"
+                }
+              }
+            },
+            "viewportWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "709D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "developer": [
+        {
+          "properties": {
+            "version": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2.0.1.0'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#D8E2ED'"
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualHeader": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "f18fe5eb66ae0ede0171",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "cluster_scatter_data"
+              }
+            },
+            "Property": "Customer ID"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "459a4f25c174e01236ba",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "cluster_scatter_data"
+              }
+            },
+            "Property": "X Value"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "be9eedda7c7825685be1",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "cluster_scatter_data"
+              }
+            },
+            "Property": "Y Value"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "2e6963e798d53eb134b0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "cluster_scatter_data"
+              }
+            },
+            "Property": "Cluster"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "ee3853809c0d45caa6cd",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "cluster_scatter_data"
+              }
+            },
+            "Property": "X Label"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "556e0e2583275a997c2d",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "cluster_scatter_data"
+              }
+            },
+            "Property": "Y Label"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["retail_transactions_fact","retail customer_master","cluster_scatter_data"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table retail_transactions_fact
+ref table DateTableTemplate_44dded6f-e29a-4510-9bb5-fc45ebbb3cba
+ref table LocalDateTable_5c961374-323d-4ddb-980e-bcfa328a9809
+ref table 'retail customer_master'
+ref table DimDate
+ref table LocalDateTable_3e905705-c46f-4a40-aced-3449fbebd0c4
+ref table 'Legend Categories'
+ref table 'Model Selector'
+ref table cluster_scatter_data
+
+ref cultureInfo en-US
+

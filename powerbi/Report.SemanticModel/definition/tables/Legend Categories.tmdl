@@ -1,0 +1,25 @@
+table 'Legend Categories'
+	lineageTag: 3bb41c6d-f8ee-4088-b944-2530511d6589
+
+	column Category
+		lineageTag: 1344fa46-3a1f-4d37-9bc6-2fbe6e8cf669
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Category]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Legend Categories' = calculated
+		mode: import
+		source =
+				
+				UNION(
+				    SELECTCOLUMNS(
+				        VALUES('retail customer_master'[segment]),
+				        "Category", 'retail customer_master'[segment]
+				    ),
+				    ROW("Category", "Others")
+				)
+
+	annotation PBI_Id = 077fe018726a4e3dafd13bd1cc00c767
+

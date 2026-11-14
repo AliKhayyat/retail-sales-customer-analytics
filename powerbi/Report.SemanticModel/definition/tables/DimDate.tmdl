@@ -1,0 +1,97 @@
+table DimDate
+	lineageTag: a0494566-6397-4a3d-acd6-238c39bedfae
+
+	column Date
+		formatString: General Date
+		lineageTag: cedc5ed7-3501-4073-b1cd-4d40cd212dac
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		variation Variation
+			isDefault
+			relationship: 0ee5b22b-5c15-4932-88f2-465218b36991
+			defaultHierarchy: LocalDateTable_3e905705-c46f-4a40-aced-3449fbebd0c4.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		formatString: 0
+		lineageTag: e8fc9b04-c53d-4024-8f5e-e1e47f9c064d
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Number'
+		formatString: 0
+		lineageTag: a6fcde00-d2b4-49dc-b623-33671e174584
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Month Number]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		lineageTag: d36bafa4-5edb-4d87-a42f-43b8f3f28989
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Year Month'
+		lineageTag: 4d9e26bc-28de-489d-a032-1d74b26ba338
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year Month]
+		sortByColumn: YearMonthSort
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		lineageTag: f9cfd739-3af3-4072-ba43-c4fa69824c98
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Quarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearMonthSort
+		formatString: 0
+		lineageTag: 6f76f406-07b9-48ce-beba-ea8c40bee55b
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [YearMonthSort]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column
+		type: calculated
+		lineageTag: cd6c9649-9108-4f8c-9ef8-2139accefa6c
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation 43dbc3e8-3a1c-4b6f-9923-b49ff7d6691c = True
+
+	partition DimDate = calculated
+		mode: import
+		source =
+				
+				ADDCOLUMNS(
+				    CALENDAR(
+				        DATE(2009, 12, 1),
+				        DATE(2011, 12, 9)
+				    ),
+				    "Year", YEAR([Date]),
+				    "Month Number", MONTH([Date]),
+				    "Month", FORMAT([Date], "MMM"),
+				    "Year Month", FORMAT([Date], "YYYY-MM"),
+				    "Quarter", "Q" & FORMAT([Date], "Q"),
+				    "YearMonthSort", YEAR([Date]) * 100 + MONTH([Date])
+				)
+
+	annotation PBI_Id = 5293674deffb44c19f0f5ec2a9d7e3c7
+

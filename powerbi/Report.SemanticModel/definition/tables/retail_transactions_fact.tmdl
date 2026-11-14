@@ -1,0 +1,266 @@
+table retail_transactions_fact
+	lineageTag: 6c542225-ee73-418f-a9c6-012f61d9cf02
+
+	measure 'Avg Recency' =
+			
+			AVERAGEX(
+			    VALUES('retail customer_master'[customer_id]),
+			    VAR LastPurchase =
+			        CALCULATE(
+			            MAX('retail_transactions_fact'[Invoice Date Only]),
+			            'retail_transactions_fact'[Quantity] > 0,
+			            'retail_transactions_fact'[Price] > 0
+			        )
+			    RETURN
+			        IF(
+			            NOT ISBLANK(LastPurchase),
+			            DATEDIFF(
+			                LastPurchase,
+			                MAX('DimDate'[Date]),
+			                DAY
+			            )
+			        )
+			)
+		lineageTag: 817d0981-5488-45d0-b331-1c52b0f72cb6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Avg Frequencyy' =
+			
+			AVERAGEX(
+			    VALUES('retail customer_master'[customer_id]),
+			    CALCULATE(
+			        DISTINCTCOUNT('retail_transactions_fact'[Invoice]),
+			        'retail_transactions_fact'[Quantity] > 0,
+			        'retail_transactions_fact'[Price] > 0
+			    )
+			)
+		lineageTag: cb49e171-c237-4e64-848f-fc75b2112071
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Avg Monetary' =
+			
+			AVERAGEX(
+			    VALUES('retail customer_master'[customer_id]),
+			    CALCULATE(
+			        SUM('retail_transactions_fact'[LineValue]),
+			        'retail_transactions_fact'[Quantity] > 0,
+			        'retail_transactions_fact'[Price] > 0
+			    )
+			)
+		lineageTag: c0097d90-fabb-4c63-874a-b5a3692ea211
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'RFM Customerss' =
+			
+			DISTINCTCOUNT('retail customer_master'[customer_id])
+		formatString: 0
+		lineageTag: ebe58bb6-4043-4d19-953c-797acac4754d
+
+	measure 'Monthly Customer Activity %' =
+			
+			VAR MonthlyCustomers =
+			    CALCULATE(
+			        DISTINCTCOUNT(
+			            'retail_transactions_fact'[Customer ID]
+			        ),
+			        'retail_transactions_fact'[Customer ID] <> BLANK(),
+			        'retail_transactions_fact'[Quantity] > 0,
+			        'retail_transactions_fact'[Price] > 0
+			    )
+			
+			VAR PeriodCustomers =
+			    CALCULATE(
+			        DISTINCTCOUNT(
+			            'retail_transactions_fact'[Customer ID]
+			        ),
+			        ALLSELECTED('DimDate'),
+			        'retail_transactions_fact'[Customer ID] <> BLANK(),
+			        'retail_transactions_fact'[Quantity] > 0,
+			        'retail_transactions_fact'[Price] > 0
+			    )
+			
+			RETURN
+			    DIVIDE(
+			        MonthlyCustomers,
+			        PeriodCustomers
+			    )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: d0bf7ae3-ff71-48e2-a609-d45f7b2e92cb
+
+	measure Measure
+		lineageTag: 6cce1c9f-3f9e-4247-87a4-3f3db8d1bd49
+
+		annotation 43dbc3e8-3a1c-4b6f-9923-b49ff7d6691c = True
+
+	measure 'Purchase Timing Insight' =
+			
+			VAR SelectedStart =
+			    MIN('DimDate'[Date])
+			VAR SelectedEnd =
+			    MAX('DimDate'[Date])
+			VAR ActiveCustomers =
+			    CALCULATE(
+			        DISTINCTCOUNT('retail_transactions_fact'[Customer ID]),
+			        'retail_transactions_fact'[Customer ID] <> BLANK(),
+			        'retail_transactions_fact'[Quantity] > 0,
+			        'retail_transactions_fact'[Price] > 0
+			    )
+			VAR AvgRecency =
+			    [Avg Recency]
+			VAR TopSegment =
+			    TOPN(
+			        1,
+			        ADDCOLUMNS(
+			            ALL('retail customer_master'[segment]),
+			            "@Recency",
+			            [Avg Recency]
+			        ),
+			        [@Recency], ASC
+			    )
+			VAR TopSegmentName =
+			    MAXX(
+			        TopSegment,
+			        'retail customer_master'[segment]
+			    )
+			RETURN
+			    "Between "
+			        & FORMAT(SelectedStart, "MMM yyyy")
+			        & " and "
+			        & FORMAT(SelectedEnd, "MMM yyyy")
+			        & ", "
+			        & FORMAT(ActiveCustomers, "#,##0")
+			        & " customers were active. "
+			        & TopSegmentName
+			        & " had the lowest average recency at "
+			        & FORMAT(AvgRecency, "0")
+			        & " days."
+		lineageTag: 1f14a013-7501-465f-9bff-0cb69a76a3d2
+
+	column Invoice
+		dataType: string
+		lineageTag: e5599d04-0acd-486d-8727-0ae1560d4d59
+		summarizeBy: none
+		sourceColumn: Invoice
+
+		annotation SummarizationSetBy = Automatic
+
+	column StockCode
+		dataType: string
+		lineageTag: 7528b28c-207f-441a-92fc-4c538661d357
+		summarizeBy: none
+		sourceColumn: StockCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column Description
+		dataType: string
+		lineageTag: 8df3db0f-7c33-4427-b9ae-6f48ea6cfc98
+		summarizeBy: none
+		sourceColumn: Description
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity
+		dataType: int64
+		formatString: 0
+		lineageTag: e8acc8b0-f8d3-4fdc-90b7-b94e633947df
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column InvoiceDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 23013e25-d84f-4549-88ae-ff24ba185584
+		summarizeBy: none
+		sourceColumn: InvoiceDate
+
+		variation Variation
+			isDefault
+			relationship: 6dc8f611-183d-49f2-a703-f9ff8330a4be
+			defaultHierarchy: LocalDateTable_5c961374-323d-4ddb-980e-bcfa328a9809.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Price
+		dataType: double
+		lineageTag: 6cbc0250-dd78-4a58-8abe-e2d1acdd5bdd
+		summarizeBy: sum
+		sourceColumn: Price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Customer ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: 3b30a798-4b7e-4f76-9b41-39922a8782a2
+		summarizeBy: none
+		sourceColumn: Customer ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 50eb9c67-9eb0-4e23-9aab-a5d3e7518f71
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceSheet
+		dataType: string
+		lineageTag: 6f8a364d-95a0-4359-85ad-57e24d25b1d5
+		summarizeBy: none
+		sourceColumn: SourceSheet
+
+		annotation SummarizationSetBy = Automatic
+
+	column LineValue
+		dataType: double
+		lineageTag: 3e623508-49c9-4418-8bfd-1455b0e40a22
+		summarizeBy: sum
+		sourceColumn: LineValue
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column QuantityType
+		dataType: string
+		lineageTag: 22f2ad9d-bfe3-4dfa-9576-57e6c37f7f49
+		summarizeBy: none
+		sourceColumn: QuantityType
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Invoice Date Only' =
+			
+			DATE(
+			    YEAR('retail_transactions_fact'[InvoiceDate]),
+			    MONTH('retail_transactions_fact'[InvoiceDate]),
+			    DAY('retail_transactions_fact'[InvoiceDate])
+			)
+		formatString: General Date
+		lineageTag: 33650ecb-b276-4288-a5ba-f4d29d9d5ba3
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition retail_transactions_fact = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Ali\Desktop\مهاجرت\پروژه\retail-sales-customer-analytics\notebooks\retail_final_outputs\retail_transactions_fact.csv"),[Delimiter=",", Columns=11, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Invoice", type text}, {"StockCode", type text}, {"Description", type text}, {"Quantity", Int64.Type}, {"InvoiceDate", type datetime}, {"Price", type number}, {"Customer ID", Int64.Type}, {"Country", type text}, {"SourceSheet", type text}, {"LineValue", type number}, {"QuantityType", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
