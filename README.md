@@ -71,35 +71,34 @@ The final dashboard contains five analytical pages:
 
 ## Project Structure
 
-```text
 retail-sales-customer-analytics/
-â”‚
-â”œâ”€â”€ data/
-â”‚   â””â”€â”€ raw / processed data used during analysis
-â”‚
-â”œâ”€â”€ notebooks/
-â”‚   â””â”€â”€ 01_retail_customer_analytics.ipynb
-â”‚
-â”œâ”€â”€ powerbi/
-â”‚   â”œâ”€â”€ Report.pbip
-â”‚   â”œâ”€â”€ Report.Report/
-â”‚   â”œâ”€â”€ Report.SemanticModel/
-â”‚   â””â”€â”€ Dashboard.pbix
-â”‚
-â”œâ”€â”€ retail_final_outputs/
-â”‚   â”œâ”€â”€ final_customer_master_table.csv
-â”‚   â”œâ”€â”€ cluster_scatter_data.csv
-â”‚   â””â”€â”€ other analytical outputs
-â”‚
-â”œâ”€â”€ sql/
-â”‚   â””â”€â”€ SQL.sql
-â”‚
-â”œâ”€â”€ reports/
-â”‚   â””â”€â”€ dashboard screenshots
-â”‚
-â”œâ”€â”€ .gitignore
-â””â”€â”€ README.md
-```
+|
+|-- data/
+|   |-- raw/
+|   |-- processed/
+|
+|-- notebooks/
+|   |-- 01_retail_customer_analytics.ipynb
+|
+|-- powerbi/
+|   |-- Report.pbip
+|   |-- Report.Report/
+|   |-- Report.SemanticModel/
+|   |-- Dashboard.pbix
+|
+|-- retail_final_outputs/
+|   |-- final_customer_master_table.csv
+|   |-- cluster_scatter_data.csv
+|   |-- other analytical outputs
+|
+|-- sql/
+|   |-- SQL.sql
+|
+|-- reports/
+|   |-- dashboard screenshots
+|
+|-- .gitignore
+|-- README.md
 
 ## Technologies
 
