@@ -1,6 +1,6 @@
 ﻿# Retail Sales & Customer Analytics
 
-End-to-end customer analytics project built on the **Online Retail II** dataset (2009â€“2011), combining SQL, Python, machine learning, and Power BI to analyze customer value, purchasing behavior, purchase timing, and customer segmentation.
+End-to-end customer analytics project built on the **Online Retail II** dataset (2009–2011), combining SQL, Python, machine learning, and Power BI to analyze customer value, purchasing behavior, purchase timing, and customer segmentation.
 
 ## Project Overview
 
@@ -48,29 +48,21 @@ Four customer clustering approaches were evaluated on a common fair comparison s
 | Customer Value | 0.3340 |
 | Purchase Behavior | 0.3251 |
 
-The model comparison is used to evaluate the separation quality of different behavioral perspectives rather than assuming that a single segmentation approach is universally optimal.
+The model comparison evaluates the separation quality of different behavioral perspectives rather than assuming that a single segmentation approach is universally optimal.
 
 ## Power BI Dashboard
 
 The final dashboard contains five analytical pages:
 
-1. **Executive Overview**  
-   Overall customer and business performance.
-
-2. **RFM Segment Analysis**  
-   Customer segmentation based on recency, frequency, and monetary value.
-
-3. **Purchase Timing Analytics**  
-   Customer purchasing intervals, overdue behavior, and timing patterns.
-
-4. **Purchase Behavior Analysis**  
-   Product diversity, purchase intensity, and behavioral characteristics.
-
-5. **Model Diagnostics**  
-   Comparison and visualization of the customer clustering models.
+1. **Executive Overview** — Overall customer and business performance.
+2. **RFM Segment Analysis** — Customer segmentation based on recency, frequency, and monetary value.
+3. **Purchase Timing Analytics** — Customer purchasing intervals, overdue behavior, and timing patterns.
+4. **Purchase Behavior Analysis** — Product diversity, purchase intensity, and behavioral characteristics.
+5. **Model Diagnostics** — Comparison and visualization of the customer clustering models.
 
 ## Project Structure
 
+```text
 retail-sales-customer-analytics/
 |
 |-- data/
@@ -99,6 +91,7 @@ retail-sales-customer-analytics/
 |
 |-- .gitignore
 |-- README.md
+```
 
 ## Technologies
 
@@ -124,7 +117,7 @@ The analytical workflow and project structure are provided so the main processin
 
 ## Dataset
 
-The project is based on the **Online Retail II** dataset containing UK-based online retail transactions from 2009â€“2011.
+The project is based on the **Online Retail II** dataset containing UK-based online retail transactions from 2009–2011.
 
 The original dataset should be obtained separately and placed in the appropriate local data directory before reproducing the analysis.
 
